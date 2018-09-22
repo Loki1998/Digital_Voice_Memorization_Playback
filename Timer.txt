@@ -1,0 +1,14 @@
+//添加的定时器15s中断
+//startAddress赋予一个截止值，直接让EXTI结束
+
+//ideas：让EXTI2占有更高优先级，使用此方法结束
+//但是EXTI使用的是同一个回调函数，不知道行不行的通
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim->Instance==htim2.Instance)
+	{
+		HAL_ADC_Stop(&hadc1);
+		startAddress=0x08040000;
+	}
+}

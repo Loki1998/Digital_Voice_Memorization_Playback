@@ -1,0 +1,71 @@
+		//TEST_OK
+		//HAL_GPIO_WritePin(GPIOA,LED_RECORD_Pin,HAL_GPIO_ReadPin(GPIOC,KEY_RECORD_Pin));
+		if(HAL_GPIO_ReadPin(GPIOC,KEY_RECORD_Pin)==GPIO_PIN_SET)
+		{
+			HAL_GPIO_WritePin(GPIOA,LED_RECORD_Pin,GPIO_PIN_RESET);
+			printf("RECOEDING \r\n");
+			HAL_Delay(500);
+			startAddress=0x08020000;endAddress=0x0802F000;
+			Address=startAddress;
+			FlashInit();
+			i=0;
+			while(Address<endAddress)
+			{
+			HAL_ADC_Start(&hadc1);
+			ad1=HAL_ADC_GetValue(&hadc1);
+			WriteFlash(Address,ad1);
+			//AD_Value=*(__IO uint16_t*)(Address);
+			//printf("addr:0x%x, data:0x%x\r\n", Address, AD_Value);
+			Address=Address+2;	
+			printf("AD value= %1.3f V  \r\n",ad1*3.3f/4096);
+			//printf("0x%x \r\n",AD_Value);
+				
+				
+				//????¡¤?¡¤¡§
+				/*
+				*TEST_ADDR=ad1;
+					printf("data:0x%x \r\n",*TEST_ADDR);
+				TEST_ADDR++;
+				i++;
+				*/
+			Uart_OSC_ShowWave(ad1,0,0,0);
+		
+			//HAL_Delay(1000);
+			}
+			//PrintFlash();
+			HAL_ADC_Stop(&hadc1);
+			printf("**************************************************************************************************************************");
+			//HAL_Delay(20000);
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOA,LED_RECORD_Pin,GPIO_PIN_SET);
+			//HAL_Delay(1000);
+		}
+		if(HAL_GPIO_ReadPin(GPIOC,KEY_PLAYBACK_Pin)==GPIO_PIN_SET)
+		{
+			HAL_GPIO_WritePin(GPIOA,LED_PLAYBACK_Pin,GPIO_PIN_RESET);
+			printf("PLAYBACKING...");
+			printf("\r\n DAC EXAMPLE !!!\r\n");
+			
+			startAddress=0x08020000;
+			endAddress=0x0802F000;
+			Address=startAddress;
+			//MemoryProgramStatus=0x0;
+			//uint32_t temp ;
+			while (Address < endAddress)
+			{
+					da1=ReadFlash(Address);
+					printf("addr:0x%x, data:0x%x\r\n", Address, da1);
+					HAL_DAC_SetValue(&hdac, DAC_CHANNEL_2, DAC_ALIGN_12B_R, da1);
+					HAL_DAC_Start(&hdac, DAC_CHANNEL_2);
+					Address = Address + 2;
+					//printf("DATA:0x%x \r\n",DATA_16);
+			}
+			printf("**************************************************************************************************************************");
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOA,LED_PLAYBACK_Pin,GPIO_PIN_SET);
+			HAL_Delay(1000);
+		}
