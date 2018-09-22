@@ -1,0 +1,2 @@
+# Digital_Voice_Memorization_Playback
+小学期创新实验：使用STM32F407开发，实现了语音的数字化存储和回放功能
